@@ -11,17 +11,20 @@ public:
 		return upper_bound(v.begin(), v.end(), x) - v.begin() >= k;
 	}
     int kthSmallest(vector<vector<int>>& matrix, int k) {
-	    for(int i = 0; i < matrix.size(); i++){
-			v.insert(v.end(), matrix[i].begin(), matrix[i].end());
+	    int lo = matrix[0][0], hi = matrix[matrix.size() - 1][matrix[0].size() - 1] + 1;//[lo, hi)
+		while(hi > lo) {
+					int mid = lo + (hi - lo) / 2;
+					
+					int count = 0,  j = matrix[0].size() - 1;
+					for(int i = 0; i < matrix.size(); i++) {
+								while(j >= 0 && matrix[i][j] > mid) j--;
+								count += (j + 1);
+					}
+					
+					if(count < k) lo = mid + 1;
+					else hi = mid;
 		}
-		sort(v.begin(), v.end());
-		int ub = v[v.size()-1], lb = v[0] - 1, mid;//(lb, ub]
-		while(ub - lb > 1){
-			mid = (ub + lb)/2;
-			if(C(mid, k)) ub = mid;
-			else lb = mid;
-		}
-		return ub;
+		return hi;
     }
 };
 

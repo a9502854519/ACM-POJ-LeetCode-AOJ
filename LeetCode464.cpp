@@ -28,6 +28,7 @@ public:
 		if(desiredTotal == 0) return true;
 		m = maxChoosableInteger;
 		if((m+1)*m/2 < desiredTotal) return false; 
+		for(int i = 0; i < 301; i++) dp[i].clear();
 		return dfs( (1<<(m+1))-1, desiredTotal);
     }
 };
@@ -37,11 +38,11 @@ int main(){
 	Solution ans;
 	int n, t;
 	//cin>>n>>t;
-	/*for(int t = 1; t <= 40; t++){
+	for(int t = 1; t <= 40; t++){
 		cout<<10<<" "<<t<<"\n\t";
 		cout<<(ans.canIWin(10,t) ? "true\n" : "false\n");
-	}*/
+	}
 	
-	cout<<(ans.canIWin(5,50) ? "true\n" : "false\n");
+	//cout<<(ans.canIWin(5,50) ? "true\n" : "false\n");
 	return 0;
 }
