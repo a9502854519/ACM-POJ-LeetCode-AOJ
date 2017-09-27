@@ -1,1 +1,14 @@
-	p-1的歐拉函數值就是答案....證明我還沒想到....
+	p-1的歐拉函數值就是答案,證明如下:
+	Let a be a generator of Z*(m), then there exists a number k
+such that a^k is also a generator of Z*(m).
+	If we let a^k  generates Z*(m), then there must exists
+some integer u such that a = (a^k) ^ u (mod m). Let n = euler_phi(m)
+			-> 1 = uk (mod n) // Discrete Logarithm Thereom
+                        -> there must exists a integer v such that
+                          uk+nv = 1
+			-> gcd(k, n) = 1
+		換局話說，如果a是一個原根， 一定存在k，使得a^k也是
+		原根，而且k跟euler(m) 互質。 跟euler_phi(m)互質的
+		個數就等於euler_phi(euler_phi(m))
+
+
