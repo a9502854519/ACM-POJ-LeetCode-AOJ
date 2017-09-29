@@ -1,7 +1,3 @@
-#include<iostream>
-
-using namespace std;
-
 #include<cstdio>
 #include<cstring>
 #include<vector>
@@ -60,6 +56,23 @@ struct BigInteger {
     }
     return c;
   }
+  BigInteger operator / (const int& b) const{
+    BigInteger c;
+    c.s.clear();
+    vector<int> temp;
+    long long x = 0;
+    for(int i = s.size()-1; i >= 0; i--){
+	x = x * BASE + s[i];
+	temp.push_back(x / b);
+	x  = x % b;
+    }
+    for(int i = temp.size()-1; i >= 0; i--){
+	    c.s.push_back(temp[i]);
+    }
+    return c;
+  }
+	
+
 
 };
 
