@@ -1,3 +1,7 @@
+#include<iostream>
+
+using namespace std;
+
 #include<cstdio>
 #include<cstring>
 #include<vector>
@@ -43,6 +47,20 @@ struct BigInteger {
     }
     return c;
   }
+  BigInteger operator * (const int& b) const{
+    BigInteger c;
+    c.s.clear();
+    long long x = 0;
+    for(int i = 0;;i++){
+	if(x == 0 && i >= s.size()) break;
+	x += s[i];
+    	x *= b;
+	c.s.push_back(x % BASE);
+	x /= BASE;
+    }
+    return c;
+  }
+
 };
 
 ostream& operator << (ostream &out, const BigInteger& x) {
@@ -61,4 +79,13 @@ istream& operator >> (istream &in, BigInteger& x) {
   if(!(in >> s)) return in;
   x = s;
   return in;
+}
+
+int  main(){
+    BigInteger A;
+    int i;
+    while(cin>>A>>i){
+    	cout<<A*i<<endl;
+    }
+    return 0;
 }
