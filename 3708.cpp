@@ -2,19 +2,6 @@
 #include<cstring>
 #include<vector>
 #include<iostream>
-/*
-目前可用的用法：
-(1)BigInteger * BigInteger
-(2)BigInteger * int (or long long)
-(3)BigInteger + BigInteger
-(3)BigInteger + int (or long long)
-(4)BigInteger / int (or long long)
-(5)BigInteger - BigInteger......自己做...我好懶
-
-
-P.S.我不太能保證乘法/除法運算一定正確....至少我測不出問題，但我也沒
-測太多數據。會怕的就自己多測幾筆抓蟲吧，有找到就告訴我。
-*/
 using namespace std;
 
 struct BigInteger {
@@ -99,7 +86,7 @@ struct BigInteger {
   bool is_zero(){
 	  return s.size() == 0;
   }
-  long long operator % (const long long& b) const{
+  long long operator % (const int& b) const{
 	  long long x = 0;
 	  for(int  i = s.size()-1; i >= 0; i--){
 		  x = x * BASE + s[i];
@@ -126,24 +113,26 @@ istream& operator >> (istream &in, BigInteger& x) {
   x = s;
   return in;
 }
-int  d;
+int  D;
 BigInteger m ,k;
-int a[100];
-int b[100];
+int A[100];
+int B[100];
 vector<int> get_3_radix(BigInteger x){
 	vector<int> s;
  	do{
-		s.push_back(x % d);
-		x = x / d;
+		s.push_back(x % D);
+		x = x / D;
 	}while(!x.is_zero());
 	return s;
 }
-int gcd(int a, int b){
-    if(b == 0) return a;
-    return (b, a % b);
+long long gcd(long long a, long long b){
+    if(b == 0){
+		return a;
+	}
+    return gcd(b, a % b);
 }
-int extgcd(int a, int b, int& x, int y){
-    int  d = a;
+long long extgcd(long long a, long long b, long long& x, long long& y){
+    long long d = a;
     if(b != 0){
 	    d = extgcd(b, a % b, y, x);
 	    y -= (a / b) * x;
@@ -153,71 +142,68 @@ int extgcd(int a, int b, int& x, int y){
     return d;
 }
 
-int mod_inverse(int a, int b){
-   int x, y;
+long long mod_inverse(long long a, long long b){
+   long long x, y;
    extgcd(a, b, x, y);
    return (b + x % b) % b;
 }
-int linear_congruence(const vector<int>& B, const vector<int>& M){
-    int  x = 0, m = 1;
+long long linear_congruence(const vector<long long>& B, const vector<long long>& M){
+    long long  x = 0, m = 1;
     for(int i = 0; i < B.size(); i++){
-        int _a = m, _b = B[i] - 1 * x, d = gcd(M[i], _a);
-        if(_b % d != 0){
+        long long a = m, b = B[i] - 1 * x, d = gcd(M[i], a);
+        if(b % d != 0){
             return -1;
         }
-        int t = _b / d * mod_inverse(_a / d, M[i] / d) % (M[i] / d);
-	x = x + m * t;
-	m *= M[i] / d;
+        long long t = b / d * mod_inverse(a / d, M[i] / d) % (M[i] / d);
+		x = x + m * t;
+		m *= M[i] / d;
     }
-    return x % m;
+    return (x % m + m) % m;
 }
 void solve(){
     vector<int> s, t;
     s = get_3_radix(m);
     t = get_3_radix(k);
-    for(int i = s.size()-1; i >= 0; i--){
-        cout<<s[i];
-    }
-    cout<<endl;
-    for(int i = t.size()-1; i >= 0; i--){
-        cout<<t[i];
-    }
-    cout<<endl;
     if(s.size() != t.size()){
-        cout<<"FOREVER\n";
+        cout<<"NO\n";
         return;
     }
-    vector<int> N, B;
-    for(int i = 0; i < s.size(); i++){//計算 x = bi (mod ni)
+    vector<long long> n, b;
+    for(int i = 0; i < s.size(); i++){
         int p = 0;
         int x = s[i];
         do{
-            if(t[i] == x) B.push_back(p);
+            if(t[i] == x) b.push_back(p);
             p++;
-            if(i < s.size()-1) x = b[x];
-            else x = a[x];
+            if(i < s.size()-1) x = B[x];
+            else x = A[x];
         }while(x != s[i]);
-        N.push_back(p);
-        if(B.size() != N.size()) {
-            cout<<"FOREVER\n";
+        n.push_back(p);
+        if(b.size() != n.size()) {
+            cout<<"NO\n";
             return;
         }
     }
-    int x = linear_congruence(B, N);
-    if(x < 0) cout<<"FOREVER\n";
-    else cout<<x<<endl;
+	/*for(int i = 0; i < b.size(); i++){
+		printf("b = %d  n = %d\n", b[i], n[i]);
+	}
+	cout<<endl;*/
+    long long res = linear_congruence(b, n);
+    if(res < 0) cout<<"NO\n";
+    else cout<<res<<endl;
     /*for(int i = 0; i < B.size(); i++){
         printf("b = %d, n = %d\n", B[i], N[i]);
     }*/
 
 }
 int  main(){
-    while(cin>>d){
-        for(int i = 1; i < d; i++){
-            scanf("%d", a+i);
+    while(cin>>D){
+		if(D < 0) break;
+        for(int i = 1; i < D; i++){
+            scanf("%d", A+i);
         }
-        for(int i = 0; i < d; i++){
-            scanf("%d", b+i);
+        for(int i = 0; i < D; i++){
+            scanf("%d", B+i);
         }
         cin>>m>>k;
         solve();

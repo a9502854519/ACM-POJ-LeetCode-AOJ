@@ -2,13 +2,32 @@
 #include<cstring>
 #include<vector>
 #include<iostream>
+/*
+目前可用的用法：
+(1)BigInteger * BigInteger
+(2)BigInteger * int (or long long)
+(3)BigInteger + BigInteger
+(3)BigInteger + int (or long long)
+(4)BigInteger / int (or long long)
+(5)BigInteger - BigInteger......自己做...我好懶
+P.S.我不太能保證乘法/除法運算一定正確....至少我測不出問題，但我也沒
+測太多數據。會怕的就自己多測幾筆抓蟲吧，有找到就告訴我。
+2017/9/30
+除法運算幾乎可確定正常。
+新增取模運算。
+*/
+using namespace std;
 
+#include<cstdio>
+#include<cstring>
+#include<vector>
+#include<iostream>
 using namespace std;
 
 struct BigInteger {
   static const int BASE = 100000000;
   static const int WIDTH = 8;
-  vector<int> s;
+  vector<long long> s;
 
   BigInteger(long long num = 0) { *this = num; } // 构造函数
   BigInteger operator = (long long num) { // 赋值运算符
@@ -43,37 +62,55 @@ struct BigInteger {
     }
     return c;
   }
-  BigInteger operator * (const int& b) const{
-    BigInteger c;
-    c.s.clear();
-    long long x = 0;
-    for(int i = 0;;i++){
-	if(x == 0 && i >= s.size()) break;
-	x += s[i];
-    	x *= b;
-	c.s.push_back(x % BASE);
-	x /= BASE;
-    }
-    return c;
+  BigInteger operator + (const long long& b) const{
+	  BigInteger c = b;
+	  return c + (*this);
   }
-  BigInteger operator / (const int& b) const{
-    BigInteger c;
-    c.s.clear();
-    vector<int> temp;
-    long long x = 0;
-    for(int i = s.size()-1; i >= 0; i--){
-	x = x * BASE + s[i];
-	temp.push_back(x / b);
-	x  = x % b;
-    }
-    for(int i = temp.size()-1; i >= 0; i--){
-	    c.s.push_back(temp[i]);
-    }
-    return c;
+  BigInteger operator * (const BigInteger& b) const{
+	  BigInteger c;
+	  c.s.resize(s.size(), 0);
+	  for(int j = 0; j < b.s.size(); j++){
+		  long long x = 0;
+		  for(int i = 0;; i++){
+			  if(x == 0 && i >= s.size()) break;
+			  if(i < s.size()){
+					x += s[i]*b.s[j];
+			  }
+			  if(i+j < c.s.size()) c.s[i+j] += x % BASE;
+			  else c.s.push_back(x % BASE);
+			  x = x / BASE + c.s[i+j] / BASE;
+			  c.s[i+j] %= BASE;
+		  }
+	  }
+	  return c;
   }
-	
-
-
+  BigInteger operator * (const long long& sum) const{
+	  BigInteger c = sum;
+	  return *this * c;
+  }
+  BigInteger operator / (const long long& b) const{
+	  BigInteger c;
+      c.s.clear();
+	  long long x = 0;
+	  vector<long long> temp;
+	  for(int i = s.size()-1; i >= 0; i--){
+		  x = x * BASE + s[i];
+		  if(x / b == 0 && temp.size() > 0 || x / b > 0)temp.push_back(x / b);
+		  x %= b;
+	  }
+	  for(int i = temp.size() -1 ; i >= 0; i--){
+		  c.s.push_back(temp[i]);
+	  }
+	  return c;
+  }
+  long long operator % (const long long& b) const{
+	  long long x = 0;
+	  for(int  i = s.size()-1; i >= 0; i--){
+		  x = x * BASE + s[i];
+		  x %= b;
+	  }
+	  return x;
+  }
 };
 
 ostream& operator << (ostream &out, const BigInteger& x) {
@@ -96,9 +133,9 @@ istream& operator >> (istream &in, BigInteger& x) {
 
 int  main(){
     BigInteger A;
-    int i;
+	int i;
     while(cin>>A>>i){
-    	cout<<A*i<<endl;
+    	cout<<A/i<<endl;
     }
     return 0;
 }
