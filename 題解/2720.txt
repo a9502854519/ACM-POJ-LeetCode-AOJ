@@ -1,0 +1,4 @@
+這題要用到一個公式：
+	a^e mod m = (1) a^e mod m   if e < euler_phi(m)
+	            (2) a^( (e mod euler_phi(m)) + euler_phi(m)) mod m
+我到現在還是不知道這個公式的來歷....
