@@ -2,7 +2,7 @@
 #include<cstdio>
 #include<vector>
 #include<cmath>
-
+#define EPS 1E-10
 using namespace std;
 typedef long long ll;
 typedef vector<double> vec;
@@ -10,7 +10,7 @@ typedef vector<vec> mat;
 
 double a, b;
 int m ,n;
-double fact[21];
+ll fact[21];
 void init(){
     fact[0] = 1;
     for(int i = 1; i <= 20; i++){
@@ -18,7 +18,7 @@ void init(){
     }
 }
 double get_comb(int i, int j){
-    return fact[i]/fact[j]/fact[i-j];
+    return (double)fact[i]/(fact[j] * fact[i-j]);
 }
 double my_pow(ll a, int b){
     double d = 1;
@@ -39,11 +39,11 @@ void Gauss_Jordan(mat& A){
         }
         swap(A[i], A[pivot]);
         for(int j = i+1; j <= n; j++) A[i][j] /= A[i][i];
-        A[i][i] = 1;
+ //       A[i][i] = 1;
         for(int j = 0; j < n; j++){
             if(i != j){
                 for(int k = i+1; k <= n; k++) A[j][k] -= A[j][i] * A[i][k];
-	    	A[j][i] = 0;
+	//    	A[j][i] = 0;
             }
         }
 //	printf("i = %d\n", i);
@@ -58,12 +58,12 @@ void Gauss_Jordan(mat& A){
     printf("1 ");
     for(int i = n-1; i >= 0; i--){
         //printf("%lld ", A[i][n]);
-	printf("%.0f ", A[i][n]);
+        printf("%.0f ", abs(A[i][n]) < EPS ? 0 : A[i][n]);
     }
     printf("\n");
 }
 void solve(){
-    int degree = (int)m*n;
+    int degree = m*n;
     mat A(degree, vec(degree+1, 0));
     A[0][0] = 1;
     for(int i = 1; i <= degree; i++){
