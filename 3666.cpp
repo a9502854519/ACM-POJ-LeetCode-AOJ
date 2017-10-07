@@ -36,7 +36,7 @@ void solve(){
 	int res = INF;
 	for(int j = 0; j < B.size(); j++){
 		res = min(res, dp_increase[j]);
-		res = min(res, dp_decrease[B.size()-1-j]);
+		//res = min(res, dp_decrease[B.size()-1-j]);
 	}
 	printf("%d\n", res);
 }
