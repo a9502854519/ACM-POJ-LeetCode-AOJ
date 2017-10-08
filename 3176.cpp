@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int dp[MAX_N+1][MAX_N+1];
+int dp[MAX_N][MAX_N];
 
 int  main(){
     int N;
