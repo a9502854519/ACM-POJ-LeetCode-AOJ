@@ -15,7 +15,6 @@ int  solve(){
 	int res = 0;
 	for(int k = 0; k < n; k++){
 		res += pow(m, gcd(k, n));
-		int t = pow(m, gcd(k, n));
 	}
 	if(n & 1){
 		res += m * pow(m, (n-1)/2) * n;
