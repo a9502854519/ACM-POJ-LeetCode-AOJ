@@ -33,7 +33,7 @@ int solve(){
 	if(n & 1){
 		res += m * poww(m, (n-1)/2) * n;
 	}else{
-		res += (m*m * poww(m, (n-1)/2) * n / 2)
+		res += (m*m * poww(m, (n-2)/2) * n / 2)
  	  	     + (poww(m, n/2) * n / 2);
 	}
 	return res/(2*n);
