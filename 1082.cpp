@@ -18,54 +18,61 @@ struct Date{
 		return date_of_month[m] + leap_date();
 	}
 	void correct_month(){
-		while(m > 12){
-			m -= 12;
-			y++;
+		while(m < 1){
+			m += 12;
+			y--;
 		}
 	}
 	Date() : y(1900), m(1), d(1), days(31) {}
 	Date(int yy, int mm, int dd) : y(yy), m(mm), d(dd) {
-		//maybe something wrong here
 		correct_month();
-		while(d > (days = get_day())){
-			d -= days;
-			m++;
+		while(d < 1){
+			m--;
 			correct_month();
+			d += (days = get_day());
+		}
+		while(d > (days = get_day())){
+			d = days;
 		}
 	}
 
-	Date  operator + (int v){
-		return Date(y, m, d+v);
+	Date  operator - (int v){
+		return Date(y, m, d-v);
 	}
-	Date  operator << (int v){
-		Date temp(y, m+v, d);
-		if(temp.d != d) return Date(y, m, d+1);
+	Date  operator >> (int v){
+		Date temp(y, m-v, d);
+		if(temp.d != d) return Date(y, m, d-1);
 		return temp;
+	}
+	bool operator >= (const Date& other) const{
+		return y > other.y || 
+		       (y == other.y && m > other.m) ||
+			   (y == other.y && m == other.m && d >= other.d);
 	}
 };
 bool dp[102][13][32];
-void pause(){
-	fgetc(stdin);
-}
+
+
 void solve(){
-	Date date(Y, M, D);
 	memset(dp, 0, sizeof(dp));
-	while(date.y < 2001 || date.m < 11 || date.d < 4){
-			
-		Date temp = date + 1;
-		dp[temp.y-1900][temp.m][temp.d] |= !dp[date.y-1900][date.m][date.d];
+	const Date start(Y, M, D);
+	Date date(2001, 11, 4);
+	while(date >= start){
+		Date temp = date - 1;
 		
-		temp = date << 1;
-		dp[temp.y-1900][temp.m][temp.d] |= !dp[date.y-1900][date.m][date.d];
-
-		if(dp[101][11][4]){
-			printf("YES\n");
-			return;
+		if(temp >= start){
+			dp[temp.y-1900][temp.m][temp.d]  |= !dp[date.y-1900][date.m][date.d];
 		}
-		date = date + 1;
-
+		
+		temp = date >> 1;
+		if(temp >= start){
+			dp[temp.y-1900][temp.m][temp.d] |= !dp[date.y-1900][date.m][date.d];
+		}
+		
+		date = date - 1;
 	}
-	printf("NO\n");
+	if(dp[Y-1900][M][D]) printf("YES\n");
+	else printf("NO\n");
 }
 int main(){
 	int T;
@@ -74,10 +81,5 @@ int main(){
 		scanf("%d%d%d", &Y, &M, &D);
 		solve();
 	}
-//	Date date;
-//	while(date.y < 2001 || date.m < 11 || date.d < 4){
-//		printf("%d %d %d\n", date.y, date.m, date.d);
-//		date = date + 1;
-//	}
 	return 0;
 }
