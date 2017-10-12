@@ -74,6 +74,11 @@ int main(){
 		scanf("%d%d%d", &Y, &M, &D);
 		solve();
 	}
+//	Date date;
+//	while(date.y < 2001 || date.m < 11 || date.d < 4){
+//		printf("%d %d %d\n", date.y, date.m, date.d);
+//		date = date + 1;
+//	}
 	return 0;
 }
 
