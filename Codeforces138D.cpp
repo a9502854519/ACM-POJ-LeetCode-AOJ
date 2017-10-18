@@ -15,16 +15,15 @@ int dp[2][MAX_H+MAX_W][MAX_H+MAX_W][MAX_H+MAX_W][MAX_H+MAX_W];
 
 int dfs(int k, int a, int b, int c, int d){//左上~右下
 	if(dp[k][a][b][c][d] >= 0){
-	//	printf("dp[%d][%d][%d][%d][%d] = %d\n", k, a, b, c, d, dp[k][a][b][c][d]);
 	       	return dp[k][a][b][c][d];
 	}
 	
 	int S[H*W];
 	memset(S, 0, sizeof(S));
 	
-	for(int i = a; i < c; i++){
+	for(int i = a + ((a & 1) ^ k); i < c; i += 2){
 		for(int j = b; j < d; j++){
-			bool temp = -1;
+			int temp = -1;
 			if(m[i][j] == 'L'){//horizontal
 				temp = dfs(k, a, b, i, d) ^ dfs(k, i+1, b, c, d);
 			}else if(m[i][j] == 'R'){// vertical
@@ -35,16 +34,13 @@ int dfs(int k, int a, int b, int c, int d){//左上~右下
 			}
 			if(temp >= 0){
 				S[temp]++;
-				if(a == 0 && b == 0 && c == H+W-1 && d == H+W-1){
-					printf("(%d, %d, %d): S[%d] = %d\n", k, i, j, temp, S[temp]);
-				}
 			}
 		}
+		
 	}
 	for(int i = 0; i < H*W; i++){
 		if(S[i] == 0){
 			dp[k][a][b][c][d] = i;
-	//		printf("dp[%d][%d][%d][%d][%d] = %d\n", k, a, b, c, d, dp[k][a][b][c][d]);
 			return dp[k][a][b][c][d];
 		}
 	}
@@ -53,13 +49,11 @@ int dfs(int k, int a, int b, int c, int d){//左上~右下
 void solve(){
 	memset(dp, -1, sizeof(dp));
 	for(int i = 0; i < H+W-1; i++){
-		printf("%d: ", i);
 		for(int j = 0; j < H+W-1; j++){
-			printf("%c", (m[i][j] == 0 ? ' ' : m[i][j]));
-			if(m[i][j] == 0) dp[(i&1)][i][j][i][j] = 0;//沒格子可以選，必敗
-			else dp[(i&1)][i][j][i][j] = 1;             //只剩一個格子可以選,只能轉移到grundy值為0的狀態,故為1
+			if(m[i][j] == 0) dp[(i&1)][i][j][i+1][j+1] = 0;//沒格子可以選，必敗
+			else dp[(i&1)][i][j][i+1][j+1] = 1;             //只剩一個格子可以選,只能轉移到grundy值為0的狀態,故為1
+			dp[(i&1)][i][j][i][j] = 0;
 		}
-		printf("\n");
 	}
 	int win = dfs(0, 0, 0, H+W-1, H+W-1) ^ dfs(1, 0, 0, H+W-1, H+W-1);
 	if(win > 0) printf("WIN\n");
