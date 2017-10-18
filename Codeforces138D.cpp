@@ -52,7 +52,6 @@ void solve(){
 		for(int j = 0; j < H+W-1; j++){
 			if(m[i][j] == 0) dp[(i&1)][i][j][i+1][j+1] = 0;//沒格子可以選，必敗
 			else dp[(i&1)][i][j][i+1][j+1] = 1;             //只剩一個格子可以選,只能轉移到grundy值為0的狀態,故為1
-			dp[(i&1)][i][j][i][j] = 0;
 		}
 	}
 	int win = dfs(0, 0, 0, H+W-1, H+W-1) ^ dfs(1, 0, 0, H+W-1, H+W-1);
