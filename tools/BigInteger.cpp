@@ -9,7 +9,8 @@
 (3)BigInteger + BigInteger
 (3)BigInteger + int (or long long)
 (4)BigInteger / int (or long long)
-(5)BigInteger - BigInteger......自己做...我好懶
+(5)BigInteger % int (or long long)
+(6)BigInteger - BigInteger......自己做...我好懶
 P.S.我不太能保證乘法/除法運算一定正確....至少我測不出問題，但我也沒
 測太多數據。會怕的就自己多測幾筆抓蟲吧，有找到就告訴我。
 2017/9/30
