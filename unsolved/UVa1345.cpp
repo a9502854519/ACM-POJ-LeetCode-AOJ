@@ -15,7 +15,6 @@ struct edge{
 };
 int N, M, V, E;
 vector<edge> G[MAX_V];
-vector<edge> Copy_G[MAX_V];
 int level[MAX_V];
 int iter[MAX_V];
 
@@ -57,7 +56,7 @@ int dfs(int v, int t, int f){
 }
 int max_flow(int s, int t){
 	int flow = 0;
-	while(true){
+	for(;;){
 		bfs(s);
 		if(level[t] < 0) return flow;
 		memset(iter, 0, sizeof(iter));
@@ -67,48 +66,66 @@ int max_flow(int s, int t){
 		}
 	}
 }
-void init(){
-	for(int i = 0; i < V; i++) G[i].clear();
-}
-
-
-
-bool C(int x){
-	int  s = 0, t = M+N+1;
-	for(int i = 0; i < V; i++) G[i] = Copy_G[i];
+void reset(int x){
+	int s = 0, t = M+N+1;
+	for(int v = M+1; v <= M+N; v++){
+		for(int i = 0; i < G[v].size(); i++){
+			edge& e = G[v][i];
+			if(e.to == s){
+				e.cap = 0; G[e.to][e.rev].cap = 1;
+			}else{
+				e.cap = 1; G[e.to][e.rev].cap = 0;
+			}
+		}
+	}
 	for(int i = 0; i < G[t].size(); i++){
 		edge& e = G[t][i];
-		G[e.to][e.rev].cap = x;
+		e.cap = 0; G[e.to][e.rev].cap = x;
 	}
+}
+bool C(int x){
+	int  s = 0, t = M+N+1;
+	reset(x);
 	return max_flow(s, t) == N;
 }
 void solve(){
 	int ub = N, lb = 0, mid;
 	while(ub - lb > 1){
 		mid = (ub + lb) / 2;
+		
 		if(C(mid)) ub = mid;
 		else       lb = mid;
 	}
 	printf("%d\n", ub);
 }
+void init(){
+	for(int i = 0; i < V; i++) G[i].clear();
+}
 int main(){
 	//1~M:群組的編號
 	//M+1~M+N:人的編號
 	//s:0, t:M+N+1
-	while(cin>>N>>M){
+	while(scanf("%d %d\n", &N, &M)){
 		if(!N && !M) break;
 		V = M+N+2;
 		init();
 		int s = 0, t = M+N+1;
 		for(int i = 1; i <= N; i++){
-			char str[20];
-			scanf("%s", str);
-			char a;
-			while(true){
-				scanf("%c", &a);
-				if(a == '\n') break;
-				add_edge(M+i, (int)(a-'0')+1, 1);
+			char str[300000];
+			char ch;
+			scanf("%[^\n]", str);
+			int d = 0;
+			bool update = false;
+			for(int j = 0; str[j] != '\0'; j++){
+				if(str[j] - '0' >= 0 && str[j] - '0' <= 9){
+					d = d * 10 + str[j]-'0';
+					update = true;
+				}else if(str[j] == ' ' && update){
+					add_edge(M+i, d+1, 1);
+					d = 0;
+				}
 			}
+			getchar();
 		}
 		for(int i = M+1; i <= M+N; i++){
 			add_edge(s, i, 1);
@@ -116,7 +133,6 @@ int main(){
 		for(int i = 1; i <= M; i++){
 			add_edge(i, t, 0);
 		}
-		for(int i = 0; i < V; i++) Copy_G[i] = G[i];
 		solve();
 	}
 	return 0;

@@ -18,13 +18,6 @@ P.S.我不太能保證乘法/除法運算一定正確....至少我測不出問�
 新增取模運算。
 */
 using namespace std;
-
-#include<cstdio>
-#include<cstring>
-#include<vector>
-#include<iostream>
-using namespace std;
-
 struct BigInteger {
   static const int BASE = 100000000;
   static const int WIDTH = 8;
