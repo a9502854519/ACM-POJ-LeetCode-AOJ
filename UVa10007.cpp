@@ -114,24 +114,28 @@ istream& operator >> (istream &in, BigInteger& x) {
 }
 
 int n;
-BigInteger pascal[MAX_N+1][MAX_N+1];
+BigInteger fact[MAX_N+1];
 BigInteger BST[MAX_N+1];
 
+void fact_calc(){
+	fact[0] = 1;
+	for(int i = 1; i <= MAX_N; i++){
+		fact[i] = fact[i-1] * i;
+	}
+}
 void init(){
-	pascal[0][0] = 1;
 	BST[0] = 1;
 	BST[1] = 1;
+	fact_calc();
 	for(int i = 1; i < MAX_N; i++){
-		BigInteger sum = 0;
+		BST[i+1] = 0;
 		for(int j = 0; j <= i; j++){
-			pascal[i][j] = pascal[i-1][j] + pascal[i-1][j-1];
-			sum = sum + pascal[i][j] * BST[j] * BST[i-j];
+			BST[i+1] = BST[i+1] + BST[j] * BST[i-j];
 		}
-		BST[i+1] = sum * (i+1);
 	}
 }
 BigInteger solve(){
-	return BST[n];
+	return BST[n] * fact[n];
 }
 int main(){
 	init();
