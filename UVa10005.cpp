@@ -4,7 +4,7 @@
 #include<cmath>
 #include<iostream>
 #include<algorithm>
-#define EPS 1E-10
+#define EPS 1e-8
 #define INF 1E10
 #define MAX_N 99
 
@@ -13,7 +13,7 @@ using namespace std;
 int n;
 
 double add(double a, double b){
-	if(abs(a+b) < EPS*(abs(a) + abs(b))) return 0;
+	if(abs(a+b) < (1E-10)*(abs(a) + abs(b))) return 0;
 	return a+b;
 }
 
@@ -37,7 +37,7 @@ struct P{
 		return add(x*p.y, -y*p.x);
 	}
 	bool operator < (const P& other) const{
-		if(x != other.x) return x < other.x;
+		if(abs(x - other.x) < EPS) return x < other.x;
 		return y < other.y;
 	}
 };
@@ -60,44 +60,62 @@ vector<P> convex_hull(vector<P>& ps){
 		while(k > t && (qs[k-1] - qs[k-2]).det(ps[i] - qs[k-1]) <= 0) k--;
 		qs[k++] = ps[i];
 	}
-	qs.resize(k);
+	qs.resize(k - 1);
 	return qs;
 }
 
-const double pi = acos(-1);
 vector<P> data;
-int R;
+double R;
 
 void init(){
 	data.clear();
 }
-
-P calc_center(P a, P b, double d){
-	
+P calc_center(P a, P b){
+	P c((a+b).x / 2, (a+b).y / 2);
+	P v((a-b).y, -(a-b).x);
+	double d = dist(a, b) / 2;
+	d = sqrt(R * R - d * d);
+	v = v * (d / dist(P(0, 0), v));
+	return c + v; 
 }
 bool solve(){
 	vector<P> ps = convex_hull(data);
-	n = data.size();
-	/*bool ok = true;
-	for(int i = 0; i < n - 1; i++){
-		double d = dist(ps[i], ps[i+1]);
-		if(d > R + EPS) return false;
-		
-	}*/
+	n = ps.size();
+	if(n == 2 && dist(ps[0], ps[1]) > 2 * R + EPS) return false;
+
+	for(int i = 0; i < n; i++){
+		for(int j = i + 1; j < n; j++){
+			if(dist(ps[i], ps[j]) > 2 * R + EPS) break;
+				
+			bool ok = true;
+			P center = calc_center(ps[i], ps[j]);
+			for(int k = 0; k < n; k++){
+				if(k != i && k != j){
+					if(dist(center, ps[k]) > R + EPS){
+						ok = false;
+						break;
+					}
+				}
+			}
+			if(ok) return true;
+		}
+	}
+	return n == 0;
 }
 int main(){
 	while(cin>>n){
-		if(!n) break;
+		if(n == 0) break;
+		init();
 		for(int i = 0; i < n; i++){
-			int a, b;
+			double a, b;
 			cin>>a>>b;
 			data.push_back(P(a, b));
 		}
 		cin>>R;
 		if(solve()){
-			cout<<"The polygon can be packed in the cicle\n";
+			cout<<"The polygon can be packed in the circle.\n";
 		}else{
-			cout<<"There is no way of packing that polygon\n";
+			cout<<"There is no way of packing that polygon.\n";
 		}
 	}
 	return 0;
