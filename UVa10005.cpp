@@ -81,7 +81,6 @@ P calc_center(P a, P b){
 bool solve(){
 	vector<P> ps = convex_hull(data);
 	n = ps.size();
-	if(n == 2 && dist(ps[0], ps[1]) > 2 * R + EPS) return false;
 
 	for(int i = 0; i < n; i++){
 		for(int j = i + 1; j < n; j++){
