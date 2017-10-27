@@ -6,25 +6,16 @@ using namespace std;
 
 const int n = 4;
 int table[n][n];
-int limit[2];
-int m;
-
-struct P{
-	int position[2];
-	P () {}
-	P (int a, int b){
-		position[0] = a, position[1] = b;
-	}
-};
+int state;
 bool check(int c){
-	for(int i = 0; i < n; i++){
+/*	for(int i = 0; i < n; i++){
 		for(int j = 0; j < n; j++){
 			printf("%2d ", table[i][j]);
 		}
 		printf("\n");
 	}
 	printf("\n");
-
+*/
 	bool ok;
 
 	ok = true;
@@ -56,49 +47,74 @@ bool check(int c){
 	}
 	return false;
 }
-bool count(){
+//false : 沒人贏得了
+//true  : 還有機會
+bool hope(){
+	int count = 0;
+
+	bool zero = false, one = false;
 	for(int i = 0; i < n; i++){
-		for(int j = 0; j < n; j++){
-			if(table[i][j] == -1) return false;
-		}
+		zero |= (table[i][i] == 0);
+		one  |= (table[i][i] == 1);
 	}
-	return true;
+	count += (zero && one);
+
+	zero  = false, one = false;
+	for(int i = 0; i < n; i++){
+		zero |= (table[n-i-1][i] == 0);
+		one  |= (table[n-i-1][i] == 1);
+	}
+	count += (zero && one);
+
+	for(int j = 0; j < n; j++){
+		zero = false, one = false;
+		for(int i = 0; i < n; i++){
+			zero |= (table[j][i] == 0);
+			one  |= (table[j][i] == 1);
+		}
+		count += (zero && one);
+	}
+
+	for(int j = 0; j < n; j++){
+		zero = false, one = false;
+		for(int i = 0; i < n; i++){
+			zero |= (table[i][j] == 0);
+			one  |= (table[i][j] == 1);
+		}
+		count += (zero && one);
+	}
+	return count < 10;
 }
-
-
-
-// -2 狀態重複
 // -1 和局
 // 0  輸
 // 1  贏
 
-int dfs(int c, P last){
+int dfs(int c){
+	state++;
+	if(!hope()) return -1;
+
 	int ok = 0;
 	bool update = false;
 	int result;
 
-	for(int k = last.position[c] + 1; k < n * n; k++){
-		int i = k / n, j = k % n;
+	for(int i = 0; i < n; i++){
+		for(int j = 0 ; j < n; j++){
+			if(table[i][j] == -1){
+				update = true;
+				table[i][j] = c;
+				
+				if(check(c) || (result = dfs(c ^ 1)) == 0){
+					ok = 1;
+				}
 
-		if(table[i][j] == -1){
-			update = true;
-			table[i][j] = c;
-			last.position[c] = k;
+				table[i][j] = -1;
+				if(ok == 1) return 1;
+				if(result == -1) ok = -1;
 
-			if(check(c) || (result = dfs(c ^ 1, last)) == 0){
-				ok = 1;
-			}
-
-			table[i][j] = -1;
-			if(ok == 1) return 1;
-			if(result == -1) ok = -1;
-
+			}	
 		}
 	}
-	if(!update){
-		if(count()) return -1;
-		return -2;
-	}
+	if(!update) return -1;
 	return ok;
 }
 void solve(){
@@ -110,16 +126,14 @@ void solve(){
 		printf("\n");
 	}
 	printf("\n");
-*/	
-	P last(-1, -1);	
+*/	state = 0;
 	for(int i = 0; i < n; i++){
 		for(int j = 0; j < n; j++){
 			if(table[i][j] == -1){
 				table[i][j] = 1;
-				last.position[1] = i * n + j;
 
-				cout<<"               restart\n";
-				if(check(1) || dfs(0, last) == 0){
+				printf("%d %d\n", i, j);
+				if(check(1) || dfs(0) == 0){
 					printf("(%d,%d)\n", i, j);
 					return;
 				}
@@ -127,6 +141,7 @@ void solve(){
 			}
 		}
 	}
+	cout<<state<<endl;
 	printf("#####\n");
 }
 int main(){
