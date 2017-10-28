@@ -1,40 +1,55 @@
+/* 假設dp[i]代表從第0到第i個區間，能榨出的最多牛奶
+ * 可以很容易地想出：
+ * dp[i] = max(dp[j]) + eff(i) for all j which end(j) <= start(i)
+ * 這題多了一個休息時間，不過不礙事，把它加到結束時間就好。
+ */
+
 #include<iostream>
 #include<algorithm>
+#include<cstdio>
+#define MAX_M 1000
+#define MAX_N 1000000
+
 using namespace std;
+
 struct Farmer_John{
-	int start;
-	int end;
-	int eff;
-	bool operator < (const Farmer_John other) const{
-		return end < other.end;
-	}
+	int start, end, eff;
 };
-Farmer_John Fj[1000];
-int calc[1000];
-int dp[1000];
-		
-int main(){
-	int N,M,R,res,j;
-	cin>>N>>M>>R;
-	for(int i=0;i<M;i++){
-		cin>>Fj[i].start>>Fj[i].end>>Fj[i].eff;
-		Fj[i].end+=R;
-	}
-	sort(Fj, Fj+M);
-	for(int i = 0; i < M; i++) calc[i] = Fj[i].end;
+Farmer_John Fj[MAX_M];
+int dp[MAX_M];
+int N,M,R;
+
+bool cmp(const Farmer_John& a, const Farmer_John& b){
+	return a.end < b.end;
+}
+bool ub_cmp(const int& val, const Farmer_John& a){
+	return val < a.end;
+}
+void solve(){
+	sort(Fj, Fj + M, cmp);
 	dp[0] = Fj[0].eff;
-	res = dp[0];
-	for(int i=1; i<M;i++){
+	int res = dp[0];
+	
+	for(int i = 1; i < M; i++){
 		dp[i] = Fj[i].eff;
-		j = upper_bound(calc,calc+M,Fj[i].start)-calc-1;
-		for(;j>=0; j--){
-			if(Fj[i].eff + dp[j] > dp[i]){
-				dp[i] = Fj[i].eff+dp[j];
+		Farmer_John* j = upper_bound(Fj, Fj + M, Fj[i].start, ub_cmp);
+		
+		for(; j - Fj >= 0; j--){
+			if(j->end <= Fj[i].start){
+				dp[i] = max(dp[i], dp[j - Fj] + Fj[i].eff);
 			}
 		}
 		res = max(res,dp[i]);
 	}
 	cout<<res<<endl;
+}
+int main(){
+	
+	scanf("%d %d %d", &N, &M, &R);
+	for(int i = 0; i < M; i++){
+		scanf("%d %d %d", &Fj[i].start, &Fj[i].end, &Fj[i].eff);
+		Fj[i].end += R;
+	}
+	solve();
 	return 0;
 }
-	
