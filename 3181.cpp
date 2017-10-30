@@ -68,9 +68,8 @@ int main() {
 	cin>>N>>K;
 	dp[0] = 1;
 
-	for(int i=1;i<=K;i++){
-		for(int j=1;j<=N;j++){
-		  if(j>=i)
+	for(int i = 1; i <= K; i++){
+		for(int j = i; j <= N; j++){
 			dp[j] = dp[j] + dp[j-i]; 
 		}
 	}
