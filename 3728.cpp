@@ -20,11 +20,6 @@ int max_profit[MAX_LOG_V][MAX_V];
 int min_profit[MAX_LOG_V][MAX_V];
 int w[MAX_V];
 
-struct data{
-	int p, sum, c;
-	data() {}
-	data(int p, int sum, int c) : p(p), sum(sum), c(c) {}
-};
 
 void add_edge(int u, int v){
 	G[u].push_back(v);
@@ -55,13 +50,13 @@ void init(){
 	for(int k = 0; k < MAX_LOG_V - 1; k++){
 		for(int v = 0; v < V; v++){
 			if(parent[k][v] < 0){
-			       	parent[k+1][v] = -1;
+			    parent[k+1][v] = -1;
 				max_w[k+1][v] = max_w[k][v];
 				min_w[k+1][v] = min_w[k][v];
 				max_profit[k+1][v] = max_profit[k][v];
 				min_profit[k+1][v] = min_profit[k][v];
 			}else{
-			       	parent[k+1][v] = parent[k][parent[k][v]];
+			    parent[k+1][v] = parent[k][parent[k][v]];
 				max_w[k+1][v] = max(max_w[k][v], max_w[k][parent[k][v]]);
 				min_w[k+1][v] = min(min_w[k][v], min_w[k][parent[k][v]]);
 				max_profit[k+1][v] = max( max(max_profit[k][v], max_profit[k][parent[k][v]]), 
@@ -84,15 +79,16 @@ void solve(){
 	init();
 	int u, v;
 	scanf("%d", &Q);
-	for(int k = 0; k < MAX_LOG_V; k++){
-		for(int v = 0; v < V; v++){
-//			printf("min_profit[%d][%d] = %d\n", k, v+1, min_profit[k][v]);
-		}
-	}
+	//for(int k = 0; k < MAX_LOG_V; k++){
+	//	for(int v = 0; v < V; v++){
+	//		printf("min_w[%d][%d] = %d\n", k, v+1, min_w[k][v]);
+	//	}
+	//}
 	while(Q--){
 		scanf("%d %d", &u, &v);
 		u--; v--;
-		int res = 0, mn = INF, mx = 0, lca;
+		int res = 0, mn = w[u], mx = w[v], lca;
+
 		if(depth[u] > depth[v]){
 			for(int k = 0; k < MAX_LOG_V; k++){
 				if((depth[u] - depth[v]) >> k & 1){
@@ -114,17 +110,18 @@ void solve(){
 		else{
 			for(int k = MAX_LOG_V - 1; k >= 0; k--){
 				if(parent[k][u] != parent[k][v]){
-					u = parent[k][u];
-					v = parent[k][v];
 					res = max(max(max_profit[k][u], -min_profit[k][v]), res);
 					mn = min(mn, min_w[k][u]);
 					mx = max(mx, max_w[k][v]);
+					u = parent[k][u];
+					v = parent[k][v];
 				}
 			}
 			lca = parent[0][u];
 		}
 		mn = min(mn, w[lca]);
 		mx = max(mx, w[lca]);
+		
 		res = max(res, mx - mn);
 		printf("%d\n", res);
 	}
