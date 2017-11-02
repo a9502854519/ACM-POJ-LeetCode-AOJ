@@ -87,7 +87,7 @@ void solve(){
 	while(Q--){
 		scanf("%d %d", &u, &v);
 		u--; v--;
-		int res = 0, mn = w[u], mx = w[v], lca;
+		int res = -INF, mn = w[u], mx = w[v], lca;
 
 		if(depth[u] > depth[v]){
 			for(int k = 0; k < MAX_LOG_V; k++){
@@ -121,7 +121,6 @@ void solve(){
 		}
 		mn = min(mn, w[lca]);
 		mx = max(mx, w[lca]);
-		
 		res = max(res, mx - mn);
 		printf("%d\n", res);
 	}
