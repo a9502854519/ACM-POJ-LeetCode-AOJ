@@ -33,8 +33,8 @@ void dfs(int p, int v, int d){
 	if(p != -1){
 		min_w[0][v] = min(w[p], w[v]);
 		max_w[0][v] = max(w[p], w[v]);
-		up_profit[0][v] = (w[p] - w[v] > 0 ? w[p] - w[v] : 0);
-		down_profit[0][v] = (w[v] - w[p] > 0 ? w[v] - w[p] : 0);
+		if(w[p] - w[v] > 0) up_profit[0][v] = w[p] - w[v];
+		if(w[v] - w[p] > 0) down_profit[0][v] = w[v] - w[p];
 	}
 	depth[v] = d;
 	//---
@@ -75,13 +75,12 @@ void solve(){
 	while(Q--){
 		scanf("%d %d", &u, &v);
 		u--; v--;
-		int res = -INF, lmn = w[u], lmx = w[u], rmn = w[v], rmx = w[v], lca;
+		int res = -INF, lmn = w[u], rmx = w[v], lca;
 
 		if(depth[u] > depth[v]){
 			for(int k = 0; k < MAX_LOG_V; k++){
 				if((depth[u] - depth[v]) >> k & 1){
-					lmx = max_w[k][u];
-					res = max(res, max(lmx - lmn, up_profit[k][u]));
+					res = max(res, max(max_w[k][u] - lmn, up_profit[k][u]));
 					lmn = min(lmn, min_w[k][u]);
 					u = parent[k][u];
 				}
@@ -89,8 +88,7 @@ void solve(){
 		}else if(depth[u] < depth[v]){
 			for(int k = 0; k < MAX_LOG_V; k++){
 				if((depth[v] - depth[u]) >> k & 1){
-					rmn = min_w[k][v];
-					res = max(res, max(down_profit[k][v], rmx - rmn));
+					res = max(res, max(down_profit[k][v], rmx -  min_w[k][v]));
 					rmx = max(rmx, max_w[k][v]);
 					v = parent[k][v];
 				}
@@ -100,10 +98,8 @@ void solve(){
 		else{
 			for(int k = MAX_LOG_V - 1; k >= 0; k--){
 				if(parent[k][u] != parent[k][v]){
-					lmx = max_w[k][u];
-					rmn = min_w[k][v];
 					res = max(max(up_profit[k][u], down_profit[k][v]), res);
-					res = max(res, max(lmx - lmn, rmx - rmn));
+					res = max(res, max(max_w[k][u] - lmn, rmx - min_w[k][v]));
 					lmn = min(lmn, min_w[k][u]);
 					rmx = max(rmx, max_w[k][v]);
 					u = parent[k][u];
