@@ -3,9 +3,9 @@
 #include<cstdio>
 #include<vector>
 #include<algorithm>
-#define MAX_N 50000
-#define MAX_M 50000
-#define MAX_DAT_SIZE 65536
+#define MAX_N 65536
+#define MAX_M 65536
+#define MAX_DAT_SIZE (1<<17) - 1
 #define INF 1E9
 
 using namespace std;
@@ -53,7 +53,10 @@ vector<int> query(vector<int> dat[], int a, int b, int k, int l, int r){
 	vector<int> v1 = query(dat, a, b, 2 * k + 1, l, (l + r) / 2);
 	vector<int> v2 = query(dat, a, b, 2 * k + 2, (l + r) / 2, r);
 	res.resize(v1.size() + v2.size());
-	merge(v1.begin(), v1.end(), v2.begin(), v2.end(), res.begin());
+	res.assign(v1.begin(), v1.end());
+	for(int i = 0; i < v2.size(); i++){
+		res.push_back(v2[i]);
+	}
 	return res;
 }
 vector<int> query(vector<int> dat[], int n, int a, int b){
@@ -74,6 +77,9 @@ void check(vector<int> dat[], int n, int x1, int x2, int y1, int y2, int* bird, 
 	}
 }
 void solve(){
+	if(N > 65536 || M > 65536){
+		printf("fuck you\n");
+	}
 	fill(dis, dis + M, INF);
 	compress();//座標壓縮
 	init();
@@ -83,15 +89,7 @@ void solve(){
 		update(dat_x, dat_x_size, x, i);
 		update(dat_y, dat_y_size, y, i);
 	}
-	//printf("MAX_X = %d  MAX_Y = %d\n", xs.size(), ys.size());
-	/*for(int i = 0; i < xs.size(); i++){
-		printf("%d ", xs[i]);
-	}
-	printf("\n");*/
-	/*for(int i = 0; i < ys.size(); i++){
-		printf("%d ", ys[i]);
-	}
-	printf("\n");*/
+
 	for(int i = 0; i < N; i++){
 		int x1 = lower_bound(xs.begin(), xs.end(), line_x1[i]) - xs.begin(),
 		    x2 = lower_bound(xs.begin(), xs.end(), line_x2[i]) - xs.begin();
