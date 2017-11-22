@@ -1,0 +1,3 @@
+Largest rectangle in histogram的變形版本
+從下往上掃，如果出現了新的方塊的話，就檢
+查該行所有的長方條可形成的最大長方形。
