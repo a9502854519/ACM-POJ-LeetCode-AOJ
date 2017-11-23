@@ -2,9 +2,9 @@
 #include<cstdio>
 #include<cstring>
 #include<algorithm>
-#define MAX_T 100000
+#define MAX_T 25000
 #define MAX_N 100
-#define INF  1E9
+#define INF  0x3f3f3f3f
 
 
 using namespace std;
@@ -13,13 +13,14 @@ int dp[MAX_T + 1];
 int deq[MAX_T + 1];
 int deqv[MAX_T + 1];
 int C[MAX_N + 1], V[MAX_N + 1];
-int N, T;
+int N, T, MAX_V;
 
 void solve(){
 	int K = T;
-	T *= 10;
+	T += MAX_V * MAX_V;
 
-	fill(dp, dp + T + 1, INF);
+	memset(dp, 0x3f, sizeof(dp));
+
 	dp[0] = 0;
 	for(int i = 1; i <= N; i++){
 		for(int a = 0; a < V[i]; a++){
@@ -36,27 +37,21 @@ void solve(){
 				}
 			}
 		}
-/*		for(int j = 0; j <= T; j++){
-			printf("dp[%d][%d] = %d\n", i, j, dp[j]);
-		}
-		printf("\n");
-*/	}
+	}
 	for(int i = 1; i <= N; i++){
 		for(int j = T - V[i]; j >= K; j--){
 			dp[j] = min(dp[j], dp[j + V[i]] + 1);
 		}
-/*		for(int j = 0; j <= T; j++){
-			printf("dp[%d][%d] = %d\n", i, j, dp[j]);
-		}
-		printf("\n");
-*/	}
+	}
 	printf("%d\n", dp[K] < INF ? dp[K] : -1);
 }
 
 int main(){
+	MAX_V = 0;
 	scanf("%d %d\n", &N, &T);
 	for(int i = 0; i < N; i++){
 		scanf("%d", V + i + 1);
+		MAX_V = max(MAX_V, V[i+1]);
 	}
 	for(int i = 0; i < N; i++){
 		scanf("%d", C + i + 1);
