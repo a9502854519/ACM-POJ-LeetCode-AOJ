@@ -14,16 +14,10 @@ vector<string> P;
 int n, m;
 int dp[MAX_N + 1][MAX_STATE][MAX_LEN + 10];
 int nxt[MAX_STATE][4];
+int match_length[MAX_STATE][4];
 char ACGT[] = "ACGT";
 
-bool check(string s, int j){
-	while(s.length() > j){
-		int k = lower_bound(P.begin(), P.end(), s) - P.begin();
-		if(k < P.size() && P[k] == s) return true;
-		s = s.substr(1);
-	}
-	return false;
-}
+
 int solve(){
 	vector<string> pfx;
 	for(int i = 0; i < P.size(); i++){
@@ -39,12 +33,22 @@ int solve(){
 	for(int i = 0; i < K; i++){
 		for(int j = 0; j < 4; j++){
 			nxt[i][j] = K;
+			match_length[i][j] = 0;
 			string s = pfx[i] + ACGT[j];
 			int k;
 			while(s.length() > 0){
 				k = lower_bound(pfx.begin(), pfx.end(), s) - pfx.begin();
 				if(k < K && pfx[k] == s){
 				       	nxt[i][j] = k;
+					break;
+				}
+				s = s.substr(1);
+			}
+			s = pfx[i] + ACGT[j];
+			while(s.length() > 0){
+				k = lower_bound(P.begin(), P.end(), s) - P.begin();
+				if(k < P.size() && P[k] == s){
+					match_length[i][j] = s.length();
 					break;
 				}
 				s = s.substr(1);
@@ -61,8 +65,7 @@ int solve(){
 					for(int k = 0; k < 4; k++){
 						int nxt_state = nxt[i][k];
 						if(nxt_state < K){
-							string s = pfx[i] + ACGT[k];
-							if(check(s, j)){
+							if(match_length[i][k] > j){
 								dp[t + 1][nxt_state][0] = (dp[t + 1][nxt_state][0] + dp[t][i][j]) % MOD;
 							}else{
 								dp[t + 1][nxt_state][j + 1] = (dp[t + 1][nxt_state][j + 1] + dp[t][i][j]) % MOD;
