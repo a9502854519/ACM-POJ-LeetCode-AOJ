@@ -99,14 +99,13 @@ void solve(){
 			}
 		}
 		for(limit = hstar(); limit <= MAX_STEP; limit++){
-			cout << limit << endl;
 			if(dfs(0, -1, x, y) < INF){
 				show_route();
 				return;
 			}
 		}
 	}
-	printf("This puzzle is unsolvable.\n");
+	printf("This puzzle is not solvable.\n");
 }
 int main(){
 	int T;
@@ -118,7 +117,7 @@ int main(){
 			}
 		}
 		solve();
-		cout << "ct = " << ct << endl;
+//		cout << "ct = " << ct << endl;
 	}
 	return 0;
 }
