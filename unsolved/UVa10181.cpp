@@ -42,7 +42,17 @@ int hstar(){
 	return res;
 }
 bool solvable(){
-	return true;	
+	int res = 0, t = 0;
+	for(int i = 0; i < n * n; i++){
+		int x = i / n, y = i % n;
+		for(int j = i + 1; j < n * n; j++){
+			int nx = j / n, ny = j % n;
+			if(puzzle[x][y] > puzzle[nx][ny]) res = 1 - res;
+		}
+
+		if(puzzle[x][y] == 0) t = (3 - x + 3 - y) & 1;
+	}
+	return (res + t) & 1;
 }
 bool check(){
 	for(int i = 0; i < n; i++){
@@ -79,6 +89,7 @@ int dfs(int num, int direction, int x, int y){
 }
 void solve(){
 	int x, y;
+	ct = 0;
 	if(solvable()){
 		re.clear();
 		for(int i = 0; i < n * n; i++){
@@ -88,6 +99,7 @@ void solve(){
 			}
 		}
 		for(limit = hstar(); limit <= MAX_STEP; limit++){
+			cout << limit << endl;
 			if(dfs(0, -1, x, y) < INF){
 				show_route();
 				return;
