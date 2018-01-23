@@ -4,9 +4,17 @@
 #include<vector>
 #include<algorithm>
 #define MAX_V 1000000 + 50
+#define TEST
 
 using namespace std;
 typedef long long ll;
+
+#ifdef TEST
+    #include<ctime>
+    using std::clock;
+    using std::clock_t;
+    clock_t S1, F1, S2, F2;
+#endif
 
 int n, m;
 ll E[MAX_V];
@@ -19,21 +27,19 @@ void init(int v){
     
     if(lch <= n){
         init(lch);
-        Dis[v].push_back(0);
-        copy(Dis[lch].begin(), Dis[lch].end(), back_inserter(Dis[v]));
+        Dis[v].push_back(E[2 * v - 1]);
+        for(int i = 0; i < Dis[lch].size(); i++){
+            Dis[v].push_back(E[2 * v - 1] + Dis[lch][i]);
+        }
         size_lch = Dis[v].size();
     }
     if(rch <= n){
         init(rch);
-        Dis[v].push_back(0);
-        copy(Dis[rch].begin(), Dis[rch].end(), back_inserter(Dis[v]));
+        Dis[v].push_back(E[2 * v]);
+        for(int i = 0; i < Dis[rch].size(); i++){
+            Dis[v].push_back(E[2 * v] + Dis[rch][i]);
+        }
         size_rch = Dis[v].size();
-    }
-    for(int i = 0; i < size_lch; i++){
-        Dis[v][i] += E[2 * v - 1];
-    }
-    for(int i = size_lch; i < size_rch; i++){
-        Dis[v][i] += E[2 * v];
     }
     inplace_merge(Dis[v].begin(), Dis[v].begin() + size_lch, Dis[v].end());
     if(Dis[v].size() > 0){
@@ -73,13 +79,25 @@ ll calc(int v, ll H){
     return res;
 }
 void solve(){
+#ifdef TEST
+    S1 = clock();
+#endif
     int A;
     ll H;
     init(1);
+#ifdef TEST
+    F1 = clock();
+    S2 = clock();
+#endif
     while(m--){
         cin >> A >> H;
         cout << calc(A, H) << endl;
     }
+#ifdef TEST
+    F2 = clock();
+    cout << "initializing time is " << double(F1 - S1) / CLOCKS_PER_SEC << endl;
+    cout << "total query time is : " << double(F2 - S2) / CLOCKS_PER_SEC << endl;
+#endif
 }
 int main(){
     cin >> n >> m;
