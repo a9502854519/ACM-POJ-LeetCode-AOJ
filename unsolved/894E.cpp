@@ -3,15 +3,23 @@
 #include<cstring>
 #include<queue>
 #include<vector>
+#include<ctime>
 #include<cmath>
 #include<utility>
 #define MAX_V 1000000 + 50
 #define MAX_E 1000000
 #define INF 1e18
+#define DEBUG
 
 using namespace std;
 typedef long long ll;
 typedef pair<ll, int> P;
+
+#ifdef DEBUG
+    using std::clock;
+    using std::clock_t;
+    clock_t S1, S2, F1, F2;
+#endif
 
 struct edge{
     int to;
@@ -107,17 +115,8 @@ int scc(){
     
     return k;
 }
-//#define DEBUG
 ll solve(){
     scc(); 
-#ifdef DEBUG
-    for(int i = 0; i < 2 * V; i++){
-        cout << "v = " << i + 1 << endl;
-        for(int j = 0; j < G[i].size(); j++){
-            cout << "\tto = " << G[i][j].to + 1 <<" cost = " << G[i][j].cost << endl;
-        }
-    }
-#endif
     int s;
     cin >> s;
     s = parent[s - 1];
@@ -147,6 +146,9 @@ ll solve(){
     return -res;
 }
 int main(){
+#ifdef DEBUG
+    S1 = clock();
+#endif
     cin >> V >> E;
     for(int i = 0; i < E; i++){
         int u, v;
@@ -154,5 +156,15 @@ int main(){
         cin >> u >> v >> cost;
         add_edge(u - 1, v - 1, cost);
     }
+#ifdef DEBUG
+    F1 = clock();
+    S2 = clock();
+#endif
     cout << solve() << endl;
+#ifdef DEBUG
+    F2 = clock();
+    cout << "Total I/O time is " << (double)(F1 - S1) / CLOCKS_PER_SEC << endl;
+    cout << "Total processing time is " << (double)(F2 - S2) / CLOCKS_PER_SEC << endl;
+#endif
+    return 0;
 }
