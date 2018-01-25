@@ -36,7 +36,7 @@ int scc(){
     memset(used, false, sizeof(used));
     vs.clear();
     for(int v = 0; v < V; v++){
-        if(!used[vs[i]]) dfs(v);
+        if(!used[v]) dfs(v);
     }
     memset(used, false, sizeof(used));
     int k = 0;
