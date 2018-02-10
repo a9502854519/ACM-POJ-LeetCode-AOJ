@@ -1,0 +1,6 @@
+一開始完全搞錯方向，後來上網查了才知道，這個問題是
+Feedback arc set的decision version，是NP-Complete問題。
+看到這個才知道只能dfs。
+先做一次dfs，尋找第一個環，把環上所有的邊全部紀錄下來；
+同時紀錄有back edge的點。接著枚舉刪除剛剛紀錄下來的邊，
+然後從有back edge的點開始dfs判斷是否有環即可。
