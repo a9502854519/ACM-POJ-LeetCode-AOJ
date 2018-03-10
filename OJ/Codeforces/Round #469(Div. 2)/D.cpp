@@ -7,19 +7,11 @@ typedef long long ll;
 ll n, m;
 int q;
 
-ll calc(ll l, ll r){
-    return (r - l) / 2 + ((r - l) & 1) * (l & 1);
-}
 ll solve(){
-    m--;
-    ll gap = 0, nxt = n, tmp;
-    while((m + gap) & 1){
-        m >>= 1;
-        tmp = nxt;
-        nxt = calc(gap, gap + nxt);
-        gap += tmp;
+    while((m & 1) == 0){
+        m += (n - m / 2);
     }
-    return (m + gap) / 2 + 1;
+    return (m + 1) / 2;
 }
 int main(){
     cin >> n >> q;
