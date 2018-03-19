@@ -25,7 +25,7 @@ void solve(){
     }
     p -= res;
     m += res + 1;
-    if(tmp == 9 && (i == 0 || (N[i - 1] - '0') % 2 == 0)) cout << m << endl;
+    if(tmp == 9) cout << m << endl;
     else cout << min(p, m) << endl;
 }
 int main(){
