@@ -16,6 +16,7 @@ typedef long long ll;
 int n, a[MAX_N], ct[MAX_N];
 ll dp[2][MAX_S];
 bool used[MAX_S];
+vector<int> s;
 const int MOD = 1e9 + 7;
 int table[71] = {
 0,
@@ -103,30 +104,46 @@ void init(){
     unique(a, a + n);
     n = idx;
 }
+// int solve(){
+    // init();
+    // memset(dp, 0, sizeof(dp));
+    // ll *cur = dp[0], *next = dp[1];
+    // cur[0] = 1;
+    // queue<P> que;
+    // que.push(make_pair(0, 0));
+    // for(int i = 0; i < n; i++){
+        // P p;
+        // while(que.front().first == i){
+            // int v = que.front().second; que.pop();
+            // if(cur[v] != 0){
+                // next[v] = (next[v] + cur[v] * ct[i]) % MOD;
+                // next[v ^ a[i]] = (next[v ^ a[i]] + cur[v] * ct[i]) % MOD;
+                // que.push(make_pair(i + 1, v ^ a[i]));
+                // que.push(make_pair(i + 1, v));
+                // cur[v] = 0;
+            // }
+        // }
+        // ll* tmp = cur;
+        // cur = next;
+        // next = tmp;
+    // }
+    // return cur[0] - 1;
+// }
 int solve(){
-    init();
-    memset(dp, 0, sizeof(dp));
-    ll *cur = dp[0], *next = dp[1];
-    cur[0] = 1;
-    queue<P> que;
-    que.push(make_pair(0, 0));
+    ll res = 1;
+    used[0] = true;
+    s.push_back(0);
     for(int i = 0; i < n; i++){
-        P p;
-        while(que.front().first == i){
-            int v = que.front().second; que.pop();
-            if(cur[v] != 0){
-                next[v] = (next[v] + cur[v] * ct[i]) % MOD;
-                next[v ^ a[i]] = (next[v ^ a[i]] + cur[v] * ct[i]) % MOD;
-                que.push(make_pair(i + 1, v ^ a[i]));
-                que.push(make_pair(i + 1, v));
-                cur[v] = 0;
+        if(used[a[i]]) res = res * 2 % MOD;
+        else{
+            int tmp = s.size();
+            for(int j = 0; j < tmp; j++){
+                s.push_back(s[j] ^ a[i]);
+                used[s[j] ^ a[i]] = true;
             }
         }
-        ll* tmp = cur;
-        cur = next;
-        next = tmp;
     }
-    return cur[0] - 1;
+    return res - 1;
 }
 int main(){
     cin >> n;
